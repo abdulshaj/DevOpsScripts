@@ -1,0 +1,276 @@
+03/06/2023 - Saturday.
+
+Engineering blogs (blocks) of Netflix / Facebook / 
+
+Assignment #1:
+Netflix engineering CI/CD - read.
+
+Jenkins:
+1. Opensource
+2. 1000 + plugins
+3. Multicloud
+
+
+Build triggers - functionality to trigger jobs.
+
+MS Teams: (build automation group)
+
+
+
+Build environment - echo statement
+
+2. Dev has their own build
+
+you wanted to run your automated tests when the dev build is successful.
+
+3. run smoke test against Dev environment.
+
+(smoke test has to be run by developers)
+
+Dev build run then automated test run.
+
+
+restful api call (get) to confirm the web page is up and running. 
+
+
+-------------
+
+Trigger based on particular time.
+
+five parameters;
+min hour dom month dow
+
+eg: 4 10 * *  2 
+
+3 and 4:
+SCM Polling vs WebHook
+
+#checking every 2-3 mins asking for ready (SCM Polling)
+
+#tell, inform when its ready (WebHook)
+
+
+run nightly test at 10 pm - SCM
+run smoke test against dev when ever Developer commits - WebHook
+
+
+Poll SCM (source code based)
+
+
+------------
+
+start EC2 and run Jenkins.
+
+give Git details
+
+Github hook trigger
+
+branch - main
+
+on Github -> setup WebHook
+
+particular github Settings -> WebHooks -> jenkins ID followed by github-webhook  (https://ip:8080/github-webhook) its a resful call.
+application json -> just push the event -> active (check) 
+
+
+-------------------------------------------
+
+Classroom Exercise !!
+
+1) Clone one of my github repo 
+
+    -> https://github.com/TestLeafInc/webdriver-tests
+
+2) Setup a webhook on the repo settings
+
+3) Go to your jenkins --> set up a new job --> choose freestyle --> enable git --> place git repo info --> select GitHub hook trigger for GITScm polling --> save
+
+4) Make a code change in the existing repo, and commit 
+
+5) Finally, Confirm your commit triggers the job 
+
+Debugging Tips:
+
+1) Go to the github repo: look at the trigger details --> recent deliveries
+2) Then go to jenkins system log and understand what went wrong!!
+
+
+
+
+
+Pipelines:
+
+why do we need?
+-  
+
+1. Developers - code is pushed to Github repo (may be like 20-3- commits)
+2. we want to have builds (every commit -> as individual build at dev environment)
+3. we want to run the automated unit tests first
+4. run smorke selenium tests (against dev environment)
+5. if selenium test fails -> notify the QA, Dev and Ops teams!! let know the manager!!
+
+combine sequence of actions or multiple actions(parallel actions) -> pipeline.
+
+
+Dashboard page -> used by 120+ test cases.
+
+Developer - multiple environments
+
+QA 
+
+SIT / UAT 
+
+Production
+
+
+---------------
+
+stage - a set of actions logically put together.
+
+------------------
+
+(lowyer case)
+
+groovy - syntax oriented language.
+
+pipeline {
+
+	agent any
+	
+	stage {
+		stage('Dev Build and Unit Tests') {
+			steps{
+			//git pull from (dev) latest code base
+			
+			// build - maven (java) or npm (js)
+			
+			// run unit tests
+			
+			}
+		
+		
+		}
+		
+		stage('Smokes tests against Dev') {
+		
+		steps {
+		// git pull from your selenium repo
+		
+		// run your selenium - testing tests
+		
+		// run your sonarqube tests
+		
+		}
+		
+		//sonarqube
+		
+		}
+		
+		stage('QA build Deployment') {
+		
+		}
+		
+		stage('Run API tests - sanity') {
+		
+		}
+		
+		stage('Run UI tests - Sanity') {
+		
+		}
+		
+		stage('Run performance tests - sanity') {
+		
+		}
+		
+		
+		
+	
+	
+	}
+
+}
+ 
+-------------------------
+
+on Jenkins browser
+
+- install Pipeline plugin.
+- install Blue Ocean pipelin
+
+Pipeline scripts:
+
+-----------------------
+
+we can make pipeline as code, (store the pipeline in repo).
+
+
+----------------------------
+
+steps to deploy dev build in dev environment
+
+1. where is the code base?
+
+git url - 
+branch: master
+public:  (if private : ssh key | token (rsa tokens can be used across the machines))
+mysql: 
+
+
+2. where should I deploy? - ubuntu server
+Ec2 instance.
+#start the Ubuntu
+Leaf-Dev server
+
+public ip -> ssh -> .pem file
+
+intall Java / Maven 
+
+git clone jenkins-pipeline (from test leaf)
+
+
+
+3. what is the syntax to start or deploy
+
+on CLI - > moved to the correct folder (where we have pom.xml)
+
+sudo mvn spring-boot:run
+
+once done, go to browser and put public id/leaf/
+
+
+asynchronus:
+command  (make it orphanage)
+nohup sudo mvn spring-boot:run > /dev/null/ 2>&1 &
+
+login again in EC2
+sudo fuser -k 80/tcp
+
+start the maven sprintboot -> sudo mvn spring-boot:run
+orphanage --> nphup
+
+
+(from Babu:
+
+Steps to deploy dev build in dev environment
+
+What should we know?
+
+1) Where is the code? GitHub URL --> https://github.com/TestLeafInc/jenkins-pipeline
+                                 --> branch : master
+                                 ---> public xxxx --> private !! ssh key | token 
+                                 ---> mysql (run few queries)
+
+2) Where should I deploy? Ubuntu Server --> 
+                                --> public ip  --> 65.2.183.166
+                                ---> connect to the machine :: ssh (.pem file)
+                                ---> install java, maven, pull git repo
+
+3) What is the syntax to start or deploy --> 
+
+                                ---> moved to the correct folder (where we have pom.xml)
+                                ---> sudo fuser -k 80/tcp (kill it if you want)
+                                ---> start the maven springboot --> sudo mvn spring-boot:run 
+                                ---> orphanage --> nphup
+								
+								
+)								
